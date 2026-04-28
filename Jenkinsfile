@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Clone Code') {
             steps {
-                git 'https://github.com/himadri116/mongodb-crud.git'
+                git branch: 'main', url: 'https://github.com/himadri116/mongodb-crud.git'
             }
         }
 
