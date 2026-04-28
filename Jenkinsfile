@@ -6,6 +6,7 @@ pipeline {
     }
 
     stages {
+
         stage('Clone Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/himadri116/mongodb-crud.git'
@@ -30,12 +31,15 @@ pipeline {
         }
 
         stage('Test App') {
-    steps {
-        script {
-            retry(5) {
-                sleep 5
-                bat 'curl http://localhost:3000'
+            steps {
+                script {
+                    retry(5) {
+                        sleep 5
+                        bat 'curl http://localhost:3000/api/authors'
+                    }
+                }
             }
         }
+
     }
 }
