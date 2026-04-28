@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+
+    triggers {
+        githubPush()
+    }
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/himadri116/mongodb-crud.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t mongodb-crud-app .'
+            }
+        }
+
+        stage('Run Containers') {
+            steps {
+                bat 'docker-compose down'
+                bat 'docker-compose up -d'
+            }
+        }
+
+        stage('Test App') {
+            steps {
+                bat 'curl http://localhost:3000'
+            }
+        }
+    }
+}
