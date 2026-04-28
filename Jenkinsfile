@@ -14,14 +14,18 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t mongodb-crud-app .'
+                dir('mongodb-crud') {
+                    bat 'docker build -t mongodb-crud-app .'
+                }
             }
         }
 
         stage('Run Containers') {
             steps {
-                bat 'docker-compose down'
-                bat 'docker-compose up -d'
+                dir('mongodb-crud') {
+                    bat 'docker-compose down'
+                    bat 'docker-compose up -d'
+                }
             }
         }
 
