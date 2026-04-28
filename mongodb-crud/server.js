@@ -1,58 +1,24 @@
-const express   = require('express');
-const mongoose  = require('mongoose');
-const cors      = require('cors');
-const path      = require('path');
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
 const app = express();
 
-// ── MIDDLEWARE ───────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-// ── DATABASE ─────────────────────────────────────────────
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://mongo:27017/library_db';
+mongoose.connect('mongodb://mongo_db:27017/university_db')
+  .then(() => console.log("✅ MongoDB Connected"));
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log('✅ MongoDB connected → library_db');
-  } catch (err) {
-    console.error('❌ MongoDB connection failed:', err.message);
-    console.log('⏳ Retrying in 5 seconds...');
-    setTimeout(connectDB, 5000);
-  }
-};
+app.use('/api/departments', require('./routes/departments'));
+app.use('/api/students', require('./routes/students'));
+app.use('/api/courses', require('./routes/courses'));
 
-connectDB();
-// ── ROUTES ───────────────────────────────────────────────
-app.use('/api/authors', require('./routes/authors'));
-app.use('/api/genres',  require('./routes/genres'));
-app.use('/api/books',   require('./routes/books'));
-
-// Serve the frontend UI
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.send("University API Running 🚀");
 });
 
-// ── START ────────────────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`\n🚀  Server running at http://localhost:${PORT}`);
-  console.log(`\n📚  API endpoints:`);
-  console.log(`   GET    /api/authors`);
-  console.log(`   POST   /api/authors`);
-  console.log(`   GET    /api/authors/:id   (with their books)`);
-  console.log(`   PUT    /api/authors/:id`);
-  console.log(`   DELETE /api/authors/:id   (cascades to books)`);
-  console.log(`\n   GET    /api/genres`);
-  console.log(`   POST   /api/genres`);
-  console.log(`   GET    /api/genres/:id    (with tagged books)`);
-  console.log(`   DELETE /api/genres/:id   ($pull from all books)`);
-  console.log(`\n   GET    /api/books        (populated author + genres)`);
-  console.log(`   POST   /api/books`);
-  console.log(`   GET    /api/books/:id`);
-  console.log(`   PUT    /api/books/:id`);
-  console.log(`   DELETE /api/books/:id`);
-  console.log(`   GET    /api/books/aggregate/stats  (raw $lookup)`);
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
