@@ -30,7 +30,10 @@ pipeline {
         }
 
         stage('Test App') {
-            steps {
+    steps {
+        script {
+            retry(5) {
+                sleep 5
                 bat 'curl http://localhost:3000'
             }
         }
